@@ -372,7 +372,6 @@ def lookup_password_arg(pw_arg):
 def main():
     """Main function"""
 
-
     parser = argparse.ArgumentParser(description="Checkmk DB Special Agent")
     parser.add_argument(
         "--backend",
@@ -418,7 +417,9 @@ def main():
 
     if args.asm_password:
         if "asm_credentials" in params["db_backend"][1]:
-            params["db_backend"][1]["asm_credentials"]["asm_password"] = lookup_password_arg(args.asm_password)
+            params["db_backend"][1]["asm_credentials"]["asm_password"] = (
+                lookup_password_arg(args.asm_password)
+            )
 
     if args.hostname:
         hostname = args.hostname
@@ -440,7 +441,7 @@ def main():
     # Determine which config file to use (priority order):
     # 1. ~/etc/agent_db.yml (backwards compatibility)
     # 2. ~/local/etc/agent_db.yml (custom config)
-    # 3. ~/local/etc/agent_db_default.yml (default config)
+    # 3. ~/local/lib/python3/cmk_addons/plugins/agent_db/etc/agent_db_default.yml (mkp shipped default config)
     configfile = f"{OMD_ROOT}/etc/agent_db.yml"
     if os.path.exists(configfile):
         log.log.info(f"Loading config from backwards compatibility path: {configfile}")
@@ -448,7 +449,7 @@ def main():
         configfile = f"{OMD_ROOT}/local/etc/agent_db.yml"
         log.log.info(f"Loading config from: {configfile}")
     else:
-        configfile = f"{OMD_ROOT}/local/etc/agent_db_default.yml"
+        configfile = f"{OMD_ROOT}/local/lib/python3/cmk_addons/plugins/agent_db/etc/agent_db_default.yml"
         log.log.info(f"Loading default config from: {configfile}")
 
     if os.path.exists(configfile):
